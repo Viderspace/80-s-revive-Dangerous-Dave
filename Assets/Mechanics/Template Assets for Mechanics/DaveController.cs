@@ -6,6 +6,7 @@ using UnityEngine;
 public class DaveController : MonoBehaviour
 {
     private Rigidbody2D _rigidbody;
+    [SerializeField]private FeetOnGround _davesFeet;
 
     private float movespeed =0.2f;
     private float moveDirection;
@@ -30,7 +31,7 @@ public class DaveController : MonoBehaviour
     void Update()
     {
         moveDirection = transform.localPosition.x + Input.GetAxis("Horizontal") * movespeed;
-        if (Input.GetKeyDown(KeyCode.UpArrow) && jumptime <= 0)
+        if (Input.GetKeyDown(KeyCode.UpArrow) && _davesFeet.OnGround)
         {
             Debug.Log("jump");
             heightTarget = transform.localPosition.y + jumpHeight;
