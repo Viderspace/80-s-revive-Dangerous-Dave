@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231d58d38747541659a21443955fcc1e, type: 3}
+  m_Name: Trophy
+  m_EditorClassIdentifier: 
+  relatedTiles: []
+  tileName: Trpohy
+  isDeadly: 0
+  isDoor: 0
+  hasCoinValue: 1
+  value: 1000

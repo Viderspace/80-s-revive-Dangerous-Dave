@@ -5,19 +5,21 @@ using UnityEngine;
 
 public class DaveController : MonoBehaviour
 {
-    private Rigidbody2D _rigidbody;
+    [SerializeField]private Rigidbody2D _rigidbody;
     [SerializeField]private FeetOnGround _davesFeet;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private Transform _transform;
+    private bool _isFacingRight;
+    public float walkingSpeed =0.2f;
+    private float _moveDirection;
+    private bool _jump;
 
-    private float movespeed =0.2f;
-    private float moveDirection;
-    private bool jump;
+    public float jumpDuration = 0.5f;
+    private float _jumpTime =  0.5f;
 
-    public float jumpduration = 0.5f;
-    private float jumptime =  0.5f;
-
-    private float heightTarget;
+    private float _heightTarget;
     public float smoothTime = 1.3F;
-    private Vector3 velocity = Vector3.zero;
+    private Vector3 _velocity = Vector3.zero;
 
 
     public float jumpHeight = 3f;
@@ -30,30 +32,37 @@ public class DaveController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        moveDirection = transform.localPosition.x + Input.GetAxis("Horizontal") * movespeed;
+        _moveDirection = Input.GetAxisRaw("Horizontal") * walkingSpeed;
+        
         if (Input.GetKeyDown(KeyCode.UpArrow) && _davesFeet.OnGround)
         {
-            Debug.Log("jump");
-            heightTarget = transform.localPosition.y + jumpHeight;
-            jumptime = jumpduration;
+            _rigidbody.AddForce(transform.up * jumpHeight);
+        }
+    }
+
+    private void SpriteDirection()
+    //this function flips dave's character sprite, whenever he changes his walking direction;
+    {
+        if (_isFacingRight && _moveDirection < 0)
+        {
+            _spriteRenderer.flipX = true;
+            _isFacingRight = false;
+            return;
+        }
+
+        if (!_isFacingRight && _moveDirection > 0)
+        {
+            _spriteRenderer.flipX = false;
+            _isFacingRight = true;
         }
     }
 
     private void FixedUpdate()
     {
-        if (jumptime > 0) 
-        {
-            jumptime -= Time.deltaTime;
-            var y = Vector3.SmoothDamp(transform.localPosition, new Vector3(
-                moveDirection,
-                heightTarget, 0), ref velocity, smoothTime).y;
-
-            transform.localPosition = new Vector3(moveDirection, y, 0);
-            return;
-        }
-        
-        transform.localPosition = new Vector3( moveDirection, 
-            transform.localPosition.y, 0);
+        var localPosition = _transform.localPosition;
+        localPosition = new Vector3( localPosition.x + _moveDirection , localPosition.y, 0);
+        _transform.localPosition = localPosition;
+        SpriteDirection();
     }
 
 }
