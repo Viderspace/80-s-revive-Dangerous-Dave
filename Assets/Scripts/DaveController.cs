@@ -1,82 +1,168 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
 
 public class DaveController : MonoBehaviour
 {
     #region Inspector
-
+    
+    [Header("Components")]
     [SerializeField] private Transform _transform;
     [SerializeField] private Rigidbody2D rigidbody;
     [SerializeField] private FeetOnGround davesFeet;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Animator animator;
     
+    
+    [Space][Header("Move Parameters")]
+    
+    [Range(0.1f, 0.2f)] [SerializeField] private float walkingSpeed = 0.11f;
+    [Range(0.01f, 0.2f)] [SerializeField] private float jetSpeed = 0.8f;
+    [SerializeField] private float jumpHeight = 600;
+    
+    [Space][Header("Control Keys")]
+    
+    [SerializeField] private KeyCode jetKey = KeyCode.RightShift;
+    [SerializeField] private KeyCode jumpKey = KeyCode.UpArrow;
+    
+    
+    
     #endregion
 
-    private bool _initIdle = true;
-    private bool _isFacingRight;
-    public float walkingSpeed =0.2f;
-    private float _moveDirection;
-    public float MoveDirection => _moveDirection;
     
+    #region Fields
+    
+    
+    
+    private static readonly int WalkingSpeed = Animator.StringToHash("Walking Speed");
+    private static readonly int JetAnimation = Animator.StringToHash("JetOn");
+    // -- Animation variables --
+    private bool _isFacingRight;
     private bool _jump;
-
-    public float jumpDuration = 0.5f;
-    private float _jumpTime =  0.5f;
-
     private float _heightTarget;
-    public float smoothTime = 1.3F;
-    private Vector3 _velocity = Vector3.zero;
+    private static readonly int IsJumping = Animator.StringToHash("IsJumping");
+
+    #endregion
+
+    
+    
+    
+    #region Properties
+
+    private float MoveDirection { get; set; }
+
+    public bool JetOn { get; set; }
+
+    public float JetFuel { get; set; } = 0;
+
+    #endregion
 
 
-    public float jumpHeight = 3f;
 
 
+    #region Methods
 
-
-    // Update is called once per frame
-    void Update()
+    private void SpriteDirection()
+        // flips dave's sprite whenever he changes his walking direction;
     {
-        _moveDirection = Input.GetAxisRaw("Horizontal");
-        animator.SetFloat("Walking Direction",_moveDirection);
-        
-        if (Input.GetKeyDown(KeyCode.UpArrow) && davesFeet.OnGround)
+        switch (_isFacingRight)
         {
-            rigidbody.AddForce(transform.up * jumpHeight);
+            case true when MoveDirection < 0:
+                spriteRenderer.flipX = true;
+                _isFacingRight = false;
+                return;
+            
+            case false when MoveDirection > 0:
+                spriteRenderer.flipX = false;
+                _isFacingRight = true;
+                break;
         }
     }
 
-    private void SpriteDirection()
-    //this function flips dave's character sprite, whenever he changes his walking direction;
+
+    private void ActivateJet()
     {
-        if (_initIdle && _moveDirection != 0f)
+        JetOn = true;
+        rigidbody.gravityScale = 0;
+        rigidbody.velocity = Vector2.zero;
+        animator.SetBool(JetAnimation, true);
+            
+
+    }
+
+    private void DeactivateJet()
+    {
+        JetOn = false;
+        rigidbody.gravityScale = 3;
+        animator.SetBool(JetAnimation, false);
+        
+
+    }
+
+    private void JetMovement()
+    {
+        var vecticalDirection =  Input.GetAxisRaw("Vertical");
+        
+        var pos = _transform.position;
+        _transform.position = new Vector3(
+            pos.x + MoveDirection * jetSpeed,
+            pos.y + vecticalDirection * jetSpeed, 0);
+    }
+
+    #endregion
+    
+    
+    
+    
+    #region MonoBehaviour
+
+    private void Start()
+    {
+        JetFuel = 100f;
+    }
+
+    private void Update()
+    {
+        MoveDirection = Input.GetAxisRaw("Horizontal");
+        
+        //enable Jet mode
+        if (Input.GetKey(jetKey) && JetFuel > 0)
         {
-            animator.SetTrigger("Exit Idle");
-            _initIdle = false;
-        }
-        if (_isFacingRight && _moveDirection < 0)
-        {
-            spriteRenderer.flipX = true;
-            _isFacingRight = false;
+            JetFuel -= Time.deltaTime;
+            
+            if (!JetOn) ActivateJet();
+            JetMovement();
             return;
         }
 
-        if (!_isFacingRight && _moveDirection > 0)
+        //disable Jet mode
+        if (JetOn && (JetFuel <= 0 || !Input.GetKey(jetKey)))
         {
-            spriteRenderer.flipX = false;
-            _isFacingRight = true;
+            DeactivateJet();
         }
         
+        // Jump
+        if (Input.GetKeyDown(jumpKey) && davesFeet.OnGround) 
+        {
+            rigidbody.AddForce(Vector2.up * jumpHeight);
+        }
     }
+    
+
 
     private void FixedUpdate()
     {
-        var localPosition = _transform.localPosition;
-        _transform.localPosition = new Vector3( localPosition.x + _moveDirection * walkingSpeed,
-            localPosition.y, 0);
         SpriteDirection();
+        if (JetOn) return;
+        
+        animator.SetFloat(WalkingSpeed, Mathf.Abs(MoveDirection));
+        animator.SetBool(IsJumping, !davesFeet.OnGround);
+        
+        var pos = _transform.localPosition;
+        _transform.localPosition = 
+            new Vector3(pos.x + (MoveDirection * walkingSpeed), pos.y, 0);
+        
     }
 
+    #endregion
 }

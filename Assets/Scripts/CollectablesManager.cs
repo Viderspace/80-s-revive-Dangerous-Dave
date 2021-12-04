@@ -8,7 +8,10 @@ public class CollectablesManager : MonoBehaviour
     #region Inspector
     [SerializeField] private Tilemap map;
     [SerializeField] private List<TileData> tileTypes;
+    [SerializeField] private DigitBoard scoreBoard;
     
+    [Space]
+    [Header("Game Controls")]
     [SerializeField] private float jetTime  = 10f;
 
     #endregion
@@ -19,7 +22,18 @@ public class CollectablesManager : MonoBehaviour
     
     
     // temp game vars  (will be moved to game manager)
-    private int PointsCollected { get; set; } = 0;
+    private int _pointsCollected = 0;
+    private int PointsCollected
+    {
+        get => _pointsCollected;
+        set
+        {
+            _pointsCollected = value;
+            scoreBoard.UpdateBoard(value);
+            
+
+        }
+    }
     public bool hasKey;
     public bool hasJet;
     public float jetFuel = 0f;

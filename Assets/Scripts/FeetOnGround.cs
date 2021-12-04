@@ -14,7 +14,7 @@ public class FeetOnGround : MonoBehaviour
         set
         {
             _onGround = value;
-            animator.SetBool("IsJumping", !value);
+            
 
 
         } 
