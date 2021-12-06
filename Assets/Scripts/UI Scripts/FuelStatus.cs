@@ -1,34 +1,51 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class FuelStatus : MonoBehaviour
 {
+    #region Inspector
     [SerializeField] private GameObject incrementPrefab;
-    
-    private readonly List<GameObject> _allIncrements = new List<GameObject>();
-    private Vector3 _frameCenter;
-    // private readonly Vector3 _originPos =  new Vector3(-3.75f, 0,-5) ;
-    public int incrementsAmount;
+    [SerializeField] private Transform firstBarLocation;
+    [SerializeField] private Transform lastBarLocation;
+    [Space][Header("design parameters")]
     public float spacing = 0.127f;
-    private int currentAmount;
+ 
+    
+    #endregion
+    
+    
+    #region Fields
+    private  int _incrementsAmount;
+    private const float FullTank = 10f;
+    private readonly List<GameObject> _allIncrements = new List<GameObject>();
+    
+    private Vector3 _frameCenter;
+    private int _currentFuelDisplayed;
+    
+    #endregion
 
     
     public void LoadFuel()
     {
-        foreach (var bar in _allIncrements)
+        foreach (var increment in _allIncrements)
         {
-            bar.SetActive(true);
+            increment.SetActive(true);
         }
     }
 
-    public void DecreaseFuel()
+    public void DecreaseFuel(float currentFuelInTank)
+    /* Method Receives The Current Fuel Status From game manager,
+     and updates the Jet Fuel display Indicator (at the Lower Dashboard) by decreasing the red Bars accordingly */
     {
-        currentAmount -= 1;
-        var increment = _allIncrements[currentAmount];
-        increment.SetActive(false);
+        var incrementFactor = FullTank / _allIncrements.Count();
+        if (!(_currentFuelDisplayed * incrementFactor > currentFuelInTank)) return;
+        _currentFuelDisplayed -= 1;
+        var highestIncrement = _allIncrements[_currentFuelDisplayed+1];
+        highestIncrement.SetActive(false);
+
+
+
     }
 
 
@@ -38,15 +55,29 @@ public class FuelStatus : MonoBehaviour
     private void Awake()
     {
         _frameCenter = GetComponent<Transform>().position;
-        currentAmount = incrementsAmount;
-        for (var i = 0; i < incrementsAmount; i++)
+        _incrementsAmount = 0;
+        while (_allIncrements.Count * spacing < lastBarLocation.position.x - firstBarLocation.position.x)
         {
-            var spawnPos = _frameCenter + new Vector3(
-                -3.3f + i * (spacing), 0, -5);
+            var spawnPos = firstBarLocation.position + new Vector3(
+                _allIncrements.Count * (spacing), 0, -5);
+            // _incrementsAmount++;
 
             var bar = Instantiate(incrementPrefab, spawnPos, Quaternion.identity);
             bar.transform.parent = gameObject.transform;
             _allIncrements.Add(bar);
         }
+        _incrementsAmount = _allIncrements.Count;
+        _currentFuelDisplayed = _allIncrements.Count;
+
+
+        // for (var i = 0; i < _incrementsAmount; i++)
+        // {
+        //     var spawnPos = originLocation.position + new Vector3(
+        //           i * (spacing), 0, -5);
+        //
+        //     var bar = Instantiate(incrementPrefab, spawnPos, Quaternion.identity);
+        //     bar.transform.parent = gameObject.transform;
+        //     _allIncrements.Add(bar);
+        // }
     }
 }

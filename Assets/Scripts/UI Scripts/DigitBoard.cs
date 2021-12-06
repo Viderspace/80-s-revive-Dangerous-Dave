@@ -12,11 +12,19 @@ public class DigitBoard : MonoBehaviour
     [SerializeField] private List<Sprite> digitsSprites = new List<Sprite>();
 
     [SerializeField] private int maxValue = 99;
-    
+
+
+    public void InitBoard()
+    {
+        foreach (var digit in digitsObjects)
+        {
+            digit.ReplaceDigit(digitsSprites[0]);
+        }
+    }
     
     public void UpdateBoard(int num)
     {
-        // input tests -----------
+        /* --- input tests --- */
         if (num < 0)
         {
             Debug.Log("Faulty input at digitboard");
@@ -25,16 +33,11 @@ public class DigitBoard : MonoBehaviour
         if (num > maxValue) { num = maxValue; }
         
 
-        for (int i = 0; i < digitsObjects.Count; i++)
+        for (var i = 0; i < digitsObjects.Count; i++)
         {
             var currentDig = num % 10;
             digitsObjects[i].ReplaceDigit(digitsSprites[currentDig]);
             if (num>0) num /= 10;
         }
     }
-
-    // private void Awake()
-    // {
-    //     UpdateBoard(104);
-    // }
 }

@@ -10,6 +10,7 @@ public class TileData : ScriptableObject
     
 
     public TileBase[] relatedTiles;
+    public bool isGun;
     public string tileName;
     public bool isDeadly;
     public bool isDoor;

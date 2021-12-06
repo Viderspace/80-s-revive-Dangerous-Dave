@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &27571160
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 27571161}
+  m_Layer: 0
+  m_Name: R FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &27571161
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 27571160}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.3, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2844363856796101455}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &942042085
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,7 +42,7 @@ GameObject:
   - component: {fileID: 942042086}
   - component: {fileID: 942042087}
   m_Layer: 0
-  m_Name: Dave Sprite
+  m_Name: Dave Sprite (Animator)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103,6 +133,36 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &1797696405
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1797696406}
+  m_Layer: 0
+  m_Name: L FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1797696406
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1797696405}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.3, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2844363856796101455}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2844363856796101459
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,6 +175,7 @@ GameObject:
   - component: {fileID: 2844363856796101456}
   - component: {fileID: 2844363856796101457}
   - component: {fileID: 2844363856796101454}
+  - component: {fileID: 9114168804440620786}
   - component: {fileID: 2844363856796101458}
   m_Layer: 7
   m_Name: Dave
@@ -136,6 +197,8 @@ Transform:
   m_Children:
   - {fileID: 2844363857741515687}
   - {fileID: 942042088}
+  - {fileID: 27571161}
+  - {fileID: 1797696406}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -179,7 +242,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 0df4bc7636e5b4a1ab895c6dfb79783f, type: 3}
   m_Color: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 0}
   m_FlipX: 0
@@ -224,15 +287,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 250ee729e78f145c2baf8d85ddab81e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transform: {fileID: 2844363856796101455}
-  rigidbody: {fileID: 2844363856796101457}
+  gameManager: {fileID: 0}
   davesFeet: {fileID: 2844363857741515686}
+  davesGun: {fileID: 9114168804440620786}
   spriteRenderer: {fileID: 942042086}
   animator: {fileID: 942042087}
+  rlFirePoints:
+  - {fileID: 27571160}
+  - {fileID: 1797696405}
   walkingSpeed: 0.11
-  jumpDuration: 0.5
-  smoothTime: 0.3
+  jetSpeed: 0.04
   jumpHeight: 600
+  jetKey: 303
+  jumpKey: 273
+  shootKey: 32
+--- !u!114 &9114168804440620786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2844363856796101459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9734a3dc67d84b7cad1f97a2f0e1a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 9026871484386450249, guid: 2597ab08aab184618ba7b0f18c14fd63, type: 3}
+  bulletSpeed: 15
+  recoilTime: 1.2
 --- !u!61 &2844363856796101458
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -271,7 +354,7 @@ GameObject:
   - component: {fileID: 2844363857741515685}
   - component: {fileID: 2844363857741515686}
   m_Layer: 7
-  m_Name: Dave's Feet Collider
+  m_Name: Dave's Feet (Collider)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

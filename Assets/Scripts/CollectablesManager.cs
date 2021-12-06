@@ -6,47 +6,27 @@ using UnityEngine.Tilemaps;
 public class CollectablesManager : MonoBehaviour
 {
     #region Inspector
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private Tilemap map;
     [SerializeField] private List<TileData> tileTypes;
-    [SerializeField] private DigitBoard scoreBoard;
     
-    [Space]
-    [Header("Game Controls")]
-    [SerializeField] private float jetTime  = 10f;
-
+    
     #endregion
 
     #region Fields
     
-    private Dictionary<TileBase, TileData> dataFromTiles;
-    
-    
-    // temp game vars  (will be moved to game manager)
-    private int _pointsCollected = 0;
-    private int PointsCollected
-    {
-        get => _pointsCollected;
-        set
-        {
-            _pointsCollected = value;
-            scoreBoard.UpdateBoard(value);
-            
+    private Dictionary<TileBase, TileData> _dataFromTiles;
 
-        }
-    }
-    public bool hasKey;
-    public bool hasJet;
-    public float jetFuel = 0f;
-    
-
-    
-    
-    // ------private variables for finding a specific tile from tilemap------
+    // ------private variables for finding a specific tile from tilemap-----
+    //TODO : I Must come up with a more reliable way to track a specific tile location (on map) at collision time (AKA perform an item pickup)
     private Vector3Int _tileLocation;
-    private readonly List<Vector3> _searchRadios = new List<Vector3>()
-    {
+    private readonly List<Vector3> _searchRadios = new List<Vector3>() {
         Vector3.right * 0.5f, Vector3.left * 0.5f,
         Vector3.up * 0.8f, Vector3.down * 0.8f,
+        Vector3.right * 0.5f + Vector3.up * 0.5f,
+        Vector3.right * 0.5f + Vector3.down * 0.5f,
+        Vector3.left * 0.5f + Vector3.up * 0.8f,
+        Vector3.left * 0.5f + Vector3.down * 0.8f,
         Vector3.right * 0.9f, Vector3.left * 0.9f,
         Vector3.up * 1.2f, Vector3.down * 1.2f,
         Vector3.zero,
@@ -61,12 +41,14 @@ public class CollectablesManager : MonoBehaviour
         //searches the tilemap and returns the tile's grid location. 
     {
         var daveLocation = dave.transform.position;
-        for (var i = 0; i < 9; i++)
+        for (var i = 0; i < _searchRadios.Count; i++)
         {
+            // Debug.Log("location: "+ map.WorldToCell(daveLocation + _searchRadios[i]));
             _tileLocation = map.WorldToCell(daveLocation + _searchRadios[i]);
             if (map.GetTile(_tileLocation)) return _tileLocation;
         }
 
+        //TODO : I Must come up with a more reliable way to track a specific tile location (on map) at collision time (AKA perform an item pickup)
         Debug.Log("Collectable Tile not found");
         return _tileLocation = map.WorldToCell(daveLocation);
         
@@ -78,10 +60,11 @@ public class CollectablesManager : MonoBehaviour
     
     private void Awake()
     {
-        dataFromTiles = new Dictionary<TileBase, TileData>();
+        // Creating a dictionary With all Tile Objects paired with their Scriptable-Data Scripts
+        _dataFromTiles = new Dictionary<TileBase, TileData>();
         foreach (var tileData in tileTypes)
         {
-            foreach (var tile in tileData.relatedTiles)  { dataFromTiles.Add(tile, tileData); }
+            foreach (var tile in tileData.relatedTiles)  { _dataFromTiles.Add(tile, tileData); }
         } 
     }
     
@@ -91,11 +74,10 @@ public class CollectablesManager : MonoBehaviour
     {
         if (!other.gameObject.CompareTag("Dave")) return;
         
-        
-        //finding the relevant tile location
+        //finding the relevant tile in Tilemap (via GetTileLocation() Method)
         var targetLocation = GetTileLocation(other.gameObject);
         var tileObject = map.GetTile(targetLocation);
-        //analyzing logic from the tile object
+        //Processing Tile info (via CollectTile() Method)
         if (tileObject != null) CollectTile(tileObject);
         // removing the tile from scene
         map.SetTile(targetLocation, null);
@@ -105,63 +87,27 @@ public class CollectablesManager : MonoBehaviour
 
     private void CollectTile(TileBase tileObject)
     {
-        var tileInfo = dataFromTiles[tileObject];
+        var tileInfo = _dataFromTiles[tileObject];
+        
         if (tileInfo.hasCoinValue)
         {
-            PointsCollected += tileInfo.value;
-            Debug.Log("collected " + tileInfo.value + "points, ("+PointsCollected + " total)");
+            gameManager.TotalPointsCollected += tileInfo.value;
         }
 
         if (tileInfo.unlocksDoor)
         {
-            hasKey = true;
-            Debug.Log("GOT KEY! GO TO THE DOOR!)");
+            gameManager.HasKey = true;
         }
 
         if (tileInfo.isJetpack)
         {
-            hasJet = true;
-            jetFuel += jetTime;
+            gameManager.CollectJetpack();
+        }
+
+        if (tileInfo.isGun)
+        {
+            gameManager.HasGun = true;
         }
     }
-    
-    #region Dumpyard
 
-    // void Start()
-    // {
-    //     BoundsInt bounds = map.cellBounds;
-    //     TileBase[] allTiles = map.GetTilesBlock(bounds);
-    //
-    //     for (int x = 0; x < bounds.size.x; x++)
-    //     {
-    //         for (int y = 0; y < bounds.size.y; y++)
-    //         {
-    //             TileBase tile = allTiles[x + y * bounds.size.x];
-    //             if (tile != null)
-    //             {
-    //                 _items.Add(new Vector3Int(x, y, 0), tile);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // Func<Vector2, Vector2, float> _isNear = (vec1, vec2) => (vec1- vec2).magnitude  ;
-    //
-    // private Vector3Int FindNearestTile(Vector2 daveLocation)
-    // {
-    //     var minDist = Mathf.Infinity;
-    //     var nearestTile = Vector3Int.zero;
-    //     foreach (var tile in _items.Keys)
-    //     {
-    //         var dist = Vector3.Distance(daveLocation, tile);
-    //         if (dist < minDist)
-    //         {
-    //             nearestTile = tile;
-    //             minDist = dist;
-    //         }
-    //     }
-    //     return nearestTile;
-    // }
-
-    #endregion
 }
