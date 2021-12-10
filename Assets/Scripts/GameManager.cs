@@ -96,6 +96,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public int CurrentLevel
+    {
+        get => _currentLevel;
+        set => _currentLevel = value;
+    }
+
     #endregion
 
     #region Methods
@@ -126,6 +132,27 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public void LoadNextLevel()
+    {
+        //TODO: Change  scene to  next level
+        CurrentLevel += 1;
+        levelBoard.UpdateBoard(CurrentLevel);
+        
+        //TODO: FIND OUT IF THE ORIGINAL GAME ALLOWS TO KEEP GUN & JETPACK, IF SO, SET THEN TO 'false' HERE
+        HasKey = false;
+    }
+    
+//     public static void QuitGame()
+//     {
+//         // save any game data here
+// #if UNITY_EDITOR
+//         // Application.Quit() does not work in the editor so
+//         // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+//         UnityEditor.EditorApplication.isPlaying = false;
+// #else
+//          Application.Quit();
+// #endif
+//     }
 
 
     #endregion

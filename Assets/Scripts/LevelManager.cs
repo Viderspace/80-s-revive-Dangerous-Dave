@@ -1,18 +1,19 @@
-
+using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class CollectablesManager : MonoBehaviour
+public class LevelManager : MonoBehaviour
 {
     #region Inspector
     [SerializeField] private GameManager gameManager;
     [SerializeField] private Tilemap map;
     [SerializeField] private List<TileData> tileTypes = new List<TileData>();
     
-    
     #endregion
-
+    
+    
     #region Fields
     
     private Dictionary<TileBase, TileData> _dataFromTiles  = new Dictionary<TileBase, TileData>();
@@ -33,7 +34,8 @@ public class CollectablesManager : MonoBehaviour
     };
 
     #endregion
-
+    
+    
     #region Methods
 
     private Vector3Int GetTileLocation(GameObject dave)
@@ -55,9 +57,11 @@ public class CollectablesManager : MonoBehaviour
     }
 
     #endregion
-
-    #region Monobehaviour
     
+    
+    
+    
+    #region Monobehaviour
     private void Awake()
     {
         // Creating a dictionary With all Tile Objects paired with their Scriptable-Data Scripts
@@ -78,10 +82,10 @@ public class CollectablesManager : MonoBehaviour
         //finding the relevant tile in Tilemap (via GetTileLocation() Method)
         var targetLocation = GetTileLocation(other.gameObject);
         var tileObject = map.GetTile(targetLocation);
-        //Processing Tile info (via CollectTile() Method)
+        //Processing Tile info & Logic (via CollectTile() Method)
+        
         if (tileObject != null) CollectTile(tileObject);
         // removing the tile from scene
-        map.SetTile(targetLocation, null);
     }
 
     #endregion
@@ -90,25 +94,13 @@ public class CollectablesManager : MonoBehaviour
     {
         var tileInfo = _dataFromTiles[tileObject];
         
-        if (tileInfo.hasCoinValue)
+        if (tileInfo.isDoor && gameManager.HasKey)
         {
-            gameManager.TotalPointsCollected += tileInfo.value;
+            gameManager.LoadNextLevel();
         }
 
-        if (tileInfo.unlocksDoor)
-        {
-            gameManager.HasKey = true;
-        }
-
-        if (tileInfo.isJetpack)
-        {
-            gameManager.CollectJetpack();
-        }
-
-        if (tileInfo.isGun)
-        {
-            gameManager.HasGun = true;
-        }
     }
 
+    
 }
+

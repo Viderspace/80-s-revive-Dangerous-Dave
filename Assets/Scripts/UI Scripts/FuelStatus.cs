@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class FuelStatus : MonoBehaviour
 {
@@ -41,7 +43,7 @@ public class FuelStatus : MonoBehaviour
         var incrementFactor = FullTank / _allIncrements.Count();
         if (!(_currentFuelDisplayed * incrementFactor > currentFuelInTank)) return;
         _currentFuelDisplayed -= 1;
-        var highestIncrement = _allIncrements[_currentFuelDisplayed+1];
+        var highestIncrement = _allIncrements[_currentFuelDisplayed];
         highestIncrement.SetActive(false);
 
 
@@ -66,11 +68,12 @@ public class FuelStatus : MonoBehaviour
             bar.transform.parent = gameObject.transform;
             _allIncrements.Add(bar);
         }
+
         _incrementsAmount = _allIncrements.Count;
         _currentFuelDisplayed = _allIncrements.Count;
+    }
 
-
-        // for (var i = 0; i < _incrementsAmount; i++)
+    // for (var i = 0; i < _incrementsAmount; i++)
         // {
         //     var spawnPos = originLocation.position + new Vector3(
         //           i * (spacing), 0, -5);
@@ -79,5 +82,33 @@ public class FuelStatus : MonoBehaviour
         //     bar.transform.parent = gameObject.transform;
         //     _allIncrements.Add(bar);
         // }
-    }
+
+        private Vector3 curpos;
+        private bool right;
+        private bool up;
+        private void Update()
+        {
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                curpos = gameObject.transform.position;
+                right = true;
+            }
+            
+        }
+
+        private void FixedUpdate()
+        {
+            if (right && transform.position.x < curpos.x +1)
+            {
+                transform.position = new Vector2(transform.position.x + Time.deltaTime, 0);
+                if (transform.position.x >= curpos.x +1)
+                {
+                    transform.position = curpos + Vector3.right;
+                    right = false;
+                }
+            }
+            
+        }
 }
+
+
