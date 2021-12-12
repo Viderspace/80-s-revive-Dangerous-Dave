@@ -1,59 +1,51 @@
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private static GameManager _shared;
+
     #region Inspector
 
-    [Header("UI Components")]
-    [Header("---Upper Dashboard")]
-    [SerializeField] private DigitBoard scoreBoard;
-    [SerializeField] private DigitBoard levelBoard;
-    [SerializeField] private LivesRemaining livesDisplay;
-    
-    
-    [Space][Header("---Lower Dashboard")]
-    [SerializeField] private GameObject goThruTheDoorImage;
-    [SerializeField] private GameObject gunTextImage;
-    [SerializeField] private GameObject jetpackTextImage;
-    [SerializeField] private GameObject jetFuelIndicator;
-    
-    [Space][Header("Game Components")]
-    // [SerializeField] private DaveController dave;
-    [SerializeField] private CollectablesManager collectablesManager;
-    // [SerializeField private TriggersManager;
+    [Space] [Header("Game Components")] [SerializeField]
+    private GameObject uiPrefab;
 
-    [Space] [Header("Game Parameters")] 
-    [Tooltip("Jet Fuel Duration : The amount of seconds dave can use Jet, from a single Jetpack Item ")]
-    
-    
+    [SerializeField] private GameObject davePrefab;
+    [SerializeField] private List<LevelData> levelsData = new List<LevelData>();
+
     #endregion
 
+
     #region Fields
+
+    private UIManager _uiManager;
+    private GameObject _dave;
+
     private const float JetFuelDuration = 10f;
     private int _totalPointsCollected;
-    private int _currentLevel;
     private float _jetFuelAmount;
     private bool _hasGun;
     private bool _hasKey;
-    
-
-
+    private bool _gameOver;
+    private int _currentLevel;
     #endregion
-
-    #region Properties
     
+    
+    #region Properties
+
     /* UI PROPERTIES */
     public int TotalPointsCollected
     {
         get => _totalPointsCollected;
         set
         {
-            _totalPointsCollected = value; 
-            scoreBoard.UpdateBoard(value);
-            
+            _totalPointsCollected = value;
+            _uiManager.Points(value);
         }
-
     }
+
     /* GAMEPLAY PROPERTIES */
     public bool HasGun
     {
@@ -61,10 +53,10 @@ public class GameManager : MonoBehaviour
         set
         {
             _hasGun = value;
-            gunTextImage.SetActive(value);
+            _uiManager.HasGun(value);
         }
     }
-    
+
 
     public float JetFuelAmount
     {
@@ -72,18 +64,10 @@ public class GameManager : MonoBehaviour
         set
         {
             _jetFuelAmount = value;
-            if (_jetFuelAmount <= 0)
-                // Tank is empty, Turn off jetpack UI display
-            {
-                jetpackTextImage.SetActive(false);
-                jetFuelIndicator.SetActive(false);
-                return;
-            }
-            // Update Fuel indicator UI display (The red bars at the lower dashboard)
-            jetFuelIndicator.GetComponent<FuelStatus>().DecreaseFuel(_jetFuelAmount);
-            
+            _uiManager.JetFuel(value);
         }
     }
+
 
     public bool HasKey
     {
@@ -91,18 +75,25 @@ public class GameManager : MonoBehaviour
         set
         {
             _hasKey = value;
-            goThruTheDoorImage.SetActive(value);
-            if(value) Debug.Log("GOT KEY! GO THRU THE DOOR!");
+            _uiManager.HasKey(value);
         }
     }
+
+
+    private int LivesRemaining { get; set; } = 3;
 
     public int CurrentLevel
     {
         get => _currentLevel;
-        set => _currentLevel = value;
+        set
+        {
+            _currentLevel = value;
+            _uiManager.Level(value);
+        }
     }
 
     #endregion
+    
 
     #region Methods
 
@@ -110,62 +101,117 @@ public class GameManager : MonoBehaviour
         // Jetpack Item has been collected, Turn on jetpack UI display
     {
         JetFuelAmount = JetFuelDuration;
-        jetpackTextImage.SetActive(true);
-        jetFuelIndicator.SetActive(true);
-        jetFuelIndicator.GetComponent<FuelStatus>().LoadFuel();
+        _uiManager.NewJetpack();
     }
 
-    private void InitGame()
+
+    private void InitAllGameVariables()
     {
-        /* Init UI */
-        scoreBoard.InitBoard();
-        levelBoard.InitBoard();
-        livesDisplay.InitLives();
-        
         /* Init Game Properties */
+        CurrentLevel = 1;
         HasGun = false;
         HasKey = false;
         JetFuelAmount = 0f;
         TotalPointsCollected = 0;
-        
-        //TODO : a "SpawnDave()" Method, Holds the starting position of dave on map for every level
-        
+        LivesRemaining = 3;
     }
 
-    public void LoadNextLevel()
+
+    public void DaveDied()
     {
-        //TODO: Change  scene to  next level
-        CurrentLevel += 1;
-        levelBoard.UpdateBoard(CurrentLevel);
-        
-        //TODO: FIND OUT IF THE ORIGINAL GAME ALLOWS TO KEEP GUN & JETPACK, IF SO, SET THEN TO 'false' HERE
-        HasKey = false;
-    }
-    
-//     public static void QuitGame()
-//     {
-//         // save any game data here
-// #if UNITY_EDITOR
-//         // Application.Quit() does not work in the editor so
-//         // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
-//         UnityEditor.EditorApplication.isPlaying = false;
-// #else
-//          Application.Quit();
-// #endif
-//     }
+        if (LivesRemaining <= 0)
+        {
+            Debug.Log("Game Over");
+            QuitGame();
+            return;
+        }
 
+        LivesRemaining -= 1;
+        _uiManager.DisplayLives(LivesRemaining);
+        LaunchDaveToInitPos();
+    }
+
+
+    private void LaunchDaveToInitPos()
+    {
+        var targetPos = (levelsData[CurrentLevel-1]).daveInitPos;
+        _dave.transform.position = targetPos;
+
+
+        //TODO : DAVE LAUNCH INIT ANIMATION (BLINKED SPRITE)
+    }
+
+    private static int CurrentLevelIndex()
+    {
+        return SceneManager.GetActiveScene().buildIndex;
+    }
+
+
+    
+    public void NextLevel()
+    {
+        CurrentLevel += 1;
+        //TODO: FIND OUT IF THE ORIGINAL GAME ALLOWS TO KEEP GUN & JETPACK in the next level, IF SO, SET THEN TO 'false' HERE
+        HasKey = false;
+        HasGun = false;
+        JetFuelAmount = 0f;
+    }
+
+    private void MakeUI()
+    {
+        var ui = Instantiate(uiPrefab, Vector3.zero, Quaternion.identity);
+        _uiManager = ui.GetComponent<UIManager>();
+        _uiManager.InitAll();
+    }
+
+    private void MakeDave()
+    {
+        _dave = Instantiate(davePrefab, Vector3.zero, Quaternion.identity);
+        LaunchDaveToInitPos();
+    }
+
+
+    private static void QuitGame()
+    {
+        // save any game data here
+#if UNITY_EDITOR
+        // Application.Quit() does not work in the editor so
+        // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+        EditorApplication.isPlaying = false;
+#else
+         Application.Quit();
+#endif
+    }
 
     #endregion
-
-
+    
+    
     #region MonoBehaviour
+
+    // This Game Manager class is a singleton;
+    private void Awake()
+    {
+        if (_shared != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        _shared = this;
+        // DontDestroyOnLoad(gameObject);
+    }
+    
 
     private void Start()
     {
-        InitGame();
+        MakeUI();
+        InitAllGameVariables();
+        MakeDave();
+        var firstLevel = SceneManager.GetSceneByBuildIndex(1);
+        SceneManager.LoadSceneAsync("Level 1", LoadSceneMode.Additive);
+        // SceneManager.SetActiveScene(firstLevel);
+        
     }
 
     #endregion
-
-
 }

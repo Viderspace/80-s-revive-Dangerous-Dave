@@ -20,8 +20,8 @@ public class DaveController : MonoBehaviour
     
     
     [Space][Header("Move Parameters")]
-    [Range(0.1f, 0.2f)] [SerializeField] private float walkingSpeed = 0.11f;
-    [Range(0.01f, 0.2f)] [SerializeField] private float jetSpeed = 0.4f;
+    [Range(0.01f, 0.2f)] [SerializeField] private float walkingSpeed = 0.11f;
+    [Range(0.5f, 2.5f)] [SerializeField] private float jetSpeed = 0.4f;
     [SerializeField] private float jumpHeight = 600;
     
     [Space][Header("Control Keys")]
@@ -62,6 +62,8 @@ public class DaveController : MonoBehaviour
 
 
     #region Methods
+    
+    
 
     private void SpriteDirection()
         // Method flips dave's sprite direction whenever he changes his walking direction;
@@ -100,8 +102,8 @@ public class DaveController : MonoBehaviour
     {
         var verticalDirection =  Input.GetAxisRaw("Vertical");
         var pos = _transform.position;
-        _transform.position = new Vector3(pos.x + MoveDirection * jetSpeed,
-            pos.y + verticalDirection * jetSpeed, 0);
+        var newpos = new Vector2(pos.x + MoveDirection,pos.y + verticalDirection);
+        _rigidbody.velocity = new Vector2(MoveDirection, verticalDirection)*jetSpeed;
     }
 
     #endregion
@@ -113,6 +115,7 @@ public class DaveController : MonoBehaviour
 
     private void Start()
     {
+        gameManager = FindObjectOfType<GameManager>();
         _transform = GetComponent<Transform>();
         _rigidbody = GetComponent<Rigidbody2D>();
     }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Pipe Horizonal (World)
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 5d49115a651c843b5a4297db92d01072, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 818cc987c54c94df5be2307b93cc042b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

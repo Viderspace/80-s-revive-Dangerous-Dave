@@ -43,11 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a202ea393843445bbb75bea2136b32f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreBoard: {fileID: 0}
-  levelBoard: {fileID: 0}
-  livesDisplay: {fileID: 0}
-  goThruTheDoorImage: {fileID: 0}
-  gunTextImage: {fileID: 0}
-  jetpackTextImage: {fileID: 0}
-  jetFuelIndicator: {fileID: 0}
-  collectablesManager: {fileID: 0}
+  uiPrefab: {fileID: 3289913089026985104, guid: c1c5b000ea1da46a9a6b10678efdd394, type: 3}
+  davePrefab: {fileID: 2844363856796101459, guid: 9e0a6f1adda594330a0ae976283ccfbb, type: 3}
+  levelsData:
+  - {fileID: 11400000, guid: 8ff484deb4fec4d4d956fefa958f417e, type: 2}
+  - {fileID: 11400000, guid: 1907d011fdd404f4eab2d21e25c2ae39, type: 2}
+  - {fileID: 11400000, guid: d27a9366376e546cc9d87d316320d0c2, type: 2}

@@ -269,7 +269,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 0.5
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -295,10 +295,10 @@ MonoBehaviour:
   rlFirePoints:
   - {fileID: 27571160}
   - {fileID: 1797696405}
-  walkingSpeed: 0.11
-  jetSpeed: 0.04
-  jumpHeight: 600
-  jetKey: 303
+  walkingSpeed: 0.05
+  jetSpeed: 2.5
+  jumpHeight: 230
+  jetKey: 310
   jumpKey: 273
   shootKey: 32
 --- !u!114 &9114168804440620786
@@ -329,7 +329,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.0150158405}
   m_SpriteTilingProperty:
     border: {x: 0.22999999, y: 0, z: 0.41, w: 0}
     pivot: {x: 0.4137002, y: 0.5}
@@ -340,7 +340,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.40110493, y: 0.92}
+  m_Size: {x: 0.40110493, y: 0.8899684}
   m_EdgeRadius: 0
 --- !u!1 &2844363857741515688
 GameObject:
@@ -356,7 +356,7 @@ GameObject:
   m_Layer: 7
   m_Name: Dave's Feet (Collider)
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -383,11 +383,11 @@ BoxCollider2D:
   m_GameObject: {fileID: 2844363857741515688}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 6ee4ab431374f4276aef213a7d09ea38, type: 2}
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.03416753, y: 0.0022132397}
+  m_Offset: {x: 0.03569317, y: 0.018489242}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -398,7 +398,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.311234, y: 0.028398514}
+  m_Size: {x: 0.28670597, y: 0.042191744}
   m_EdgeRadius: 0
 --- !u!114 &2844363857741515686
 MonoBehaviour:

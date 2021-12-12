@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Red Wall (World)
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 584120cb42a44416c9f3eca712c02ac4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6b5bbe6fc21584c578550e762ce61c13, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

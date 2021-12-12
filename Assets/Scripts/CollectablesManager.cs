@@ -1,12 +1,13 @@
-
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+
 public class CollectablesManager : MonoBehaviour
 {
     #region Inspector
-    [SerializeField] private GameManager gameManager;
+    [SerializeField] public GameManager gameManager;
     [SerializeField] private Tilemap map;
     [SerializeField] private List<TileData> tileTypes = new List<TileData>();
     
@@ -31,6 +32,9 @@ public class CollectablesManager : MonoBehaviour
         Vector3.up * 1.2f, Vector3.down * 1.2f,
         Vector3.zero,
     };
+    
+    
+    // private GameManager gameManager;
 
     #endregion
 
@@ -60,13 +64,14 @@ public class CollectablesManager : MonoBehaviour
     
     private void Awake()
     {
+        gameManager = FindObjectOfType<GameManager>();
         // Creating a dictionary With all Tile Objects paired with their Scriptable-Data Scripts
         _dataFromTiles = new Dictionary<TileBase, TileData>();
         foreach (var tileData in tileTypes)
         {
             foreach (var tile in tileData.relatedTiles) { _dataFromTiles.Add(tile, tileData); }
-            
         } 
+        
     }
     
     
@@ -111,4 +116,14 @@ public class CollectablesManager : MonoBehaviour
         }
     }
 
+    public void SetGameManager(GameObject other)
+    {
+        gameManager = other.GetComponent<GameManager>();
+
+    }
+
+    private void Start()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+    }
 }

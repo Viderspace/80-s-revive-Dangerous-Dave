@@ -6,16 +6,19 @@ public class LivesRemaining : MonoBehaviour
 {
     [SerializeField] private List<GameObject> livesObjects = new List<GameObject>();
     
-    private int _remainingLives = 3;
+    private int _remainingLives;
     public int Lives
     {
         get => _remainingLives;
         set
         {
             _remainingLives = value;
+            if (Lives > 2 || Lives < 0) return;
             livesObjects[_remainingLives].SetActive(false);
         }
     }
+    
+    
 
     public void InitLives()
     {
@@ -24,7 +27,7 @@ public class LivesRemaining : MonoBehaviour
             life.SetActive(true);
         }
 
-        _remainingLives = 3;
+        Lives = 3;
     }
 
 

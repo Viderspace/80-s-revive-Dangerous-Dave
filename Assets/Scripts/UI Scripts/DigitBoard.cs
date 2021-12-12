@@ -2,11 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DigitBoard : MonoBehaviour
 {
     // list contains the board digit-objects, ** arranged from right to left **
-    [SerializeField] private List<DynamicDigit> digitsObjects = new List<DynamicDigit>();
+    [SerializeField] private List<Image> digitsObjects = new List<Image>();
     
     // list contains all (0-9) numeral digits sprites in order
     [SerializeField] private List<Sprite> digitsSprites = new List<Sprite>();
@@ -18,7 +19,7 @@ public class DigitBoard : MonoBehaviour
     {
         foreach (var digit in digitsObjects)
         {
-            digit.ReplaceDigit(digitsSprites[0]);
+            digit.sprite = digitsSprites[0];
         }
     }
     
@@ -36,7 +37,7 @@ public class DigitBoard : MonoBehaviour
         for (var i = 0; i < digitsObjects.Count; i++)
         {
             var currentDig = num % 10;
-            digitsObjects[i].ReplaceDigit(digitsSprites[currentDig]);
+            digitsObjects[i].sprite = digitsSprites[currentDig];
             if (num>0) num /= 10;
         }
     }
