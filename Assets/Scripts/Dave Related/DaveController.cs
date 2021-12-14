@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,9 +14,10 @@ public class DaveController : MonoBehaviour
     [SerializeField] private Gun davesGun;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Animator animator;
-    /* list below contains 2 child game-Objects, which holds the origin location
-     of which dave's gun shoot bullets from in both right and left direction.
-     (hence the name: "Right-Left Fire Points") */
+    
+    /* list below ("Right-Left Fire Points") contains 2 child Objects of dave that keeps the starting position
+     of bullets which dave shoots from (right or left).
+      */
     [SerializeField] private List<GameObject> rlFirePoints = new List<GameObject>();
     
     
@@ -23,6 +25,8 @@ public class DaveController : MonoBehaviour
     [Range(0.01f, 0.2f)] [SerializeField] private float walkingSpeed = 0.11f;
     [Range(0.5f, 2.5f)] [SerializeField] private float jetSpeed = 0.4f;
     [SerializeField] private float jumpHeight = 600;
+    [SerializeField] private  float spawnDelay = 3f;
+    
     
     [Space][Header("Control Keys")]
     [SerializeField] private KeyCode jetKey = KeyCode.RightShift;
@@ -39,12 +43,15 @@ public class DaveController : MonoBehaviour
     private static readonly int WalkingSpeed = Animator.StringToHash("Walking Speed");
     private static readonly int JetAnimation = Animator.StringToHash("JetOn");
     private static readonly int IsJumping = Animator.StringToHash("IsJumping");
+    private static readonly int BlinkTrigger = Animator.StringToHash("BlinkTrigger");
     
     /* -- Physics variables --  */
     private Transform _transform;
     private Rigidbody2D _rigidbody;
     private bool _isFacingRight;
     private bool _jump;
+    private float _freezeMovement;
+
 
     #endregion
 
@@ -63,80 +70,36 @@ public class DaveController : MonoBehaviour
 
     #region Methods
     
-    
-
-    private void SpriteDirection()
-        // Method flips dave's sprite direction whenever he changes his walking direction;
+    public void SpawnDave(Vector2 initPos)
     {
-        switch (_isFacingRight)
-        {
-            case true when MoveDirection < 0:
-                spriteRenderer.flipX = true;
-                _isFacingRight = false;
-                return;
-            
-            case false when MoveDirection > 0:
-                spriteRenderer.flipX = false;
-                _isFacingRight = true;
-                break;
-        }
+        transform.position = initPos;
+        IdleFreeze();
     }
 
-
-    private void ActivateJet()
-    {
-        JetMode = true;
-        _rigidbody.gravityScale = 0;
-        _rigidbody.velocity = Vector2.zero;
-        animator.SetBool(JetAnimation, true);
-    }
-
-    private void DeactivateJet()
-    {
-        JetMode = false;
-        _rigidbody.gravityScale = 3;
-        animator.SetBool(JetAnimation, false);
-    }
-
-    private void JetMovement()
-    {
-        var verticalDirection =  Input.GetAxisRaw("Vertical");
-        var pos = _transform.position;
-        var newpos = new Vector2(pos.x + MoveDirection,pos.y + verticalDirection);
-        _rigidbody.velocity = new Vector2(MoveDirection, verticalDirection)*jetSpeed;
-    }
-
-    #endregion
-    
-    
-    
-    
-    #region MonoBehaviour
-
-    private void Start()
-    {
-        gameManager = FindObjectOfType<GameManager>();
-        _transform = GetComponent<Transform>();
-        _rigidbody = GetComponent<Rigidbody2D>();
+    private void Shoot()
+    { 
+        /* shooting a bullet from the correct location (see dave child objects) to the correct direction
+         (derived from dave's sprite direction) */
+        var gunLocation = (_isFacingRight) ? rlFirePoints[0] : rlFirePoints[1];
+        davesGun.ShootBullet(_isFacingRight, gunLocation.transform.position);
     }
     
-    private void Update()
+
+    private void MoveDave()
     {
         MoveDirection = Input.GetAxisRaw("Horizontal");
-        
-        //shoot a bullet (to the correct direction according to where dave is facing)
-        if (gameManager.HasGun && Input.GetKey(shootKey))
+
+
+        if (Input.GetKey(shootKey) && gameManager.HasGun)
         {
-            var gunLocation = (_isFacingRight) ? rlFirePoints[0] : rlFirePoints[1];
-            davesGun.ShootBullet(_isFacingRight, gunLocation.transform.position);
+            Shoot();
         }
         
         //enable Jet mode (& Apply Jetpack Physics)
         if (Input.GetKey(jetKey) && gameManager.JetFuelAmount > 0)
         {
             gameManager.JetFuelAmount -= Time.deltaTime;
-            if (!JetMode) ActivateJet();
-            JetMovement();
+            ActivateJet();
             return;
         }
 
@@ -151,14 +114,99 @@ public class DaveController : MonoBehaviour
         {
             _rigidbody.AddForce(Vector2.up * jumpHeight);
         }
+        
     }
     
+    
+    private void SetSpriteDirection()
+        // flips dave's Sprite whenever he changes his walking direction;
+    {
+        switch (_isFacingRight)
+        {
+            case true when MoveDirection < 0:
+                spriteRenderer.flipX = true;
+                _isFacingRight = false;
+                return;
+            
+            case false when MoveDirection > 0:
+                spriteRenderer.flipX = false;
+                _isFacingRight = true;
+                break;
+        }
+    }
+    
+    private void IdleFreeze()
+    /*Freeze's Dave Movement (for "SpawnDelay" seconds), and sets Animation clip to Idle */
+    {
+        _freezeMovement = spawnDelay;
+        animator.SetTrigger(BlinkTrigger);
+        animator.SetFloat(WalkingSpeed, 0);
+        animator.SetBool(IsJumping, false);
+    }
 
+    #endregion
+
+    #region Jetpack Methods
+
+    private void ActivateJet()
+    {
+        if (JetMode)
+        {
+            JetMovement();
+            return;
+        }
+        
+        _rigidbody.gravityScale = 0f;
+        _rigidbody.velocity = Vector2.zero;
+        animator.SetBool(JetAnimation, true);
+        JetMode = true;
+        JetMovement();
+    }
+
+    private void DeactivateJet()
+    {
+        JetMode = false;
+        _rigidbody.gravityScale = 0.5f;
+        animator.SetBool(JetAnimation, false);
+    }
+
+    private void JetMovement()
+    {
+        var verticalDirection = Input.GetAxisRaw("Vertical");
+        _rigidbody.velocity = new Vector2(MoveDirection, verticalDirection) * jetSpeed;
+    }
+
+    #endregion
+    
+
+    
+    
+    
+    #region MonoBehaviour
+
+    private void Start()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+        _transform = GetComponent<Transform>();
+        _rigidbody = GetComponent<Rigidbody2D>();
+    }
+    
+    private void Update()
+    {
+        if (_freezeMovement > 0f)
+        {
+            _freezeMovement -= Time.deltaTime;
+            return;
+        }
+        MoveDave();
+    }
 
     private void FixedUpdate()
     {
+        if (_freezeMovement > 0f) return;
+        
         // Adjust Sprite direction
-        SpriteDirection();
+        SetSpriteDirection();
         if (JetMode) return;
         
         // Apply Walk/Jump animation
@@ -167,9 +215,18 @@ public class DaveController : MonoBehaviour
         
         // walk with normal Physics
         var pos = _transform.localPosition;
-        _transform.localPosition = 
-            new Vector3(pos.x + (MoveDirection * walkingSpeed), pos.y, 0);
-        
+        _transform.localPosition = new Vector3(pos.x + (MoveDirection * walkingSpeed), pos.y, 0);
+    }
+
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("hit");
+            gameManager.DaveDied();
+            //TODO: explosion animation
+        }
     }
 
     #endregion

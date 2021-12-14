@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -14,7 +15,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject davePrefab;
     [SerializeField] private List<LevelData> levelsData = new List<LevelData>();
-
+    private DoorTrigger _door;
+    
     #endregion
 
 
@@ -76,8 +78,11 @@ public class GameManager : MonoBehaviour
         {
             _hasKey = value;
             _uiManager.HasKey(value);
+            _door = FindObjectOfType<DoorTrigger>();
+            if (_door) _door.Locked(value);
         }
     }
+
 
 
     private int LivesRemaining { get; set; } = 3;
@@ -128,25 +133,16 @@ public class GameManager : MonoBehaviour
 
         LivesRemaining -= 1;
         _uiManager.DisplayLives(LivesRemaining);
-        LaunchDaveToInitPos();
+        SpawnDaveToInitPos();
     }
 
 
-    private void LaunchDaveToInitPos()
+    private void SpawnDaveToInitPos()
     {
         var targetPos = (levelsData[CurrentLevel-1]).daveInitPos;
-        _dave.transform.position = targetPos;
-
-
-        //TODO : DAVE LAUNCH INIT ANIMATION (BLINKED SPRITE)
+        _dave.GetComponent<DaveController>().SpawnDave(targetPos);
     }
-
-    private static int CurrentLevelIndex()
-    {
-        return SceneManager.GetActiveScene().buildIndex;
-    }
-
-
+    
     
     public void NextLevel()
     {
@@ -155,6 +151,7 @@ public class GameManager : MonoBehaviour
         HasKey = false;
         HasGun = false;
         JetFuelAmount = 0f;
+        SpawnDaveToInitPos();
     }
 
     private void MakeUI()
@@ -167,8 +164,10 @@ public class GameManager : MonoBehaviour
     private void MakeDave()
     {
         _dave = Instantiate(davePrefab, Vector3.zero, Quaternion.identity);
-        LaunchDaveToInitPos();
+        SpawnDaveToInitPos();
     }
+
+
 
 
     private static void QuitGame()
@@ -207,6 +206,7 @@ public class GameManager : MonoBehaviour
         MakeUI();
         InitAllGameVariables();
         MakeDave();
+        
         var firstLevel = SceneManager.GetSceneByBuildIndex(1);
         SceneManager.LoadSceneAsync("Level 1", LoadSceneMode.Additive);
         // SceneManager.SetActiveScene(firstLevel);

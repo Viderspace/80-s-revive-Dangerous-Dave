@@ -1,4 +1,4 @@
-using System;
+
 using UnityEngine;
 
 public class CamTrigger : MonoBehaviour
@@ -13,17 +13,16 @@ public class CamTrigger : MonoBehaviour
 
     [SerializeField] private float panAmount;
     [SerializeField] private float panSpeed = 1f;
+
     #endregion
 
-    
+
     #region Fields
 
     private bool _initState;
     private Camera _mainCam;
     private bool _moveCam;
     private Vector3 _targetPos;
-
-
 
     #endregion
 
@@ -36,10 +35,9 @@ public class CamTrigger : MonoBehaviour
             _targetPos, panSpeed);
         if (_mainCam.transform.position == _targetPos) _moveCam = false;
     }
-    
 
     #endregion
-    
+
 
     #region MonoBehaviour
 
@@ -49,8 +47,8 @@ public class CamTrigger : MonoBehaviour
         _mainCam = FindObjectOfType<Camera>();
     }
 
-    private void OnTriggerExit2D(Collider2D other) {
-        
+    private void OnTriggerExit2D(Collider2D other)
+    {
         if (!other.gameObject.CompareTag("Dave")) return;
 
         switch (_initState)
@@ -66,7 +64,7 @@ public class CamTrigger : MonoBehaviour
                 _initState = true;
                 break;
         }
-        
+
         _moveCam = true;
     }
 
@@ -76,8 +74,6 @@ public class CamTrigger : MonoBehaviour
         {
             PanCamera();
         }
-
-        
     }
 
     #endregion

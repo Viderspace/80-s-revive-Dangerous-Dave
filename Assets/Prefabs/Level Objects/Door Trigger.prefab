@@ -44,7 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5fb901aa74f54428b95317df5dc6838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelData: {fileID: 0}
   gameManager: {fileID: 0}
+  mainCam: {fileID: 0}
+  dave: {fileID: 0}
 --- !u!61 &7894704521762334609
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -55,7 +58,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

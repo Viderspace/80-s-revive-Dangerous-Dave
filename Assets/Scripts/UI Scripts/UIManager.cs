@@ -1,13 +1,10 @@
-using System;
-using UnityEditor;
+
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
     private static UIManager _shared;
-    
-    [SerializeField] private GameManager gameManager;
+
     
     [Space][Header("UI Components")]
     [Header("---Upper Dashboard")]

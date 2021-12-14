@@ -1,4 +1,4 @@
-using System;
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -103,6 +103,7 @@ public class CollectablesManager : MonoBehaviour
         if (tileInfo.unlocksDoor)
         {
             gameManager.HasKey = true;
+            
         }
 
         if (tileInfo.isJetpack)

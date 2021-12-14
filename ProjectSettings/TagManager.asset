@@ -7,18 +7,20 @@ TagManager:
   - World
   - Collectable
   - Dave
+  - Door
+  - Enemy
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - World
   - Water
   - UI
   - Items
   - Dave
   - Dave's Bullets
-  - 
-  - 
+  - Enemy
+  - Enemy Bullets
   - 
   - 
   - 
