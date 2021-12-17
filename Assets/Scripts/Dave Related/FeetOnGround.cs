@@ -19,10 +19,16 @@ public class FeetOnGround : MonoBehaviour
 
         } 
     }
-    
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            OnGround = true;
+            return;
+        }
+
         if (!other.gameObject.CompareTag("World")) return;
         OnGround = true;
     }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,9 +28,9 @@ public class DaveController : MonoBehaviour
     
     
     [Space][Header("Control Keys")]
-    [SerializeField] private KeyCode jetKey = KeyCode.RightShift;
-    [SerializeField] private KeyCode jumpKey = KeyCode.UpArrow;
-    [SerializeField] private KeyCode shootKey = KeyCode.Space;
+    [SerializeField] public KeyCode jetKey = KeyCode.RightShift;
+    [SerializeField] public KeyCode jumpKey = KeyCode.UpArrow;
+    [SerializeField] public KeyCode shootKey = KeyCode.Space;
     
     #endregion
 
@@ -51,7 +50,7 @@ public class DaveController : MonoBehaviour
     private bool _isFacingRight;
     private bool _jump;
     private float _freezeMovement;
-
+    private static readonly int Explosion = Animator.StringToHash("Explosion");
 
     #endregion
 
@@ -72,8 +71,10 @@ public class DaveController : MonoBehaviour
     
     public void SpawnDave(Vector2 initPos)
     {
-        transform.position = initPos;
+        animator.SetTrigger(BlinkTrigger);
         IdleFreeze();
+        transform.position = initPos;
+        
     }
 
     private void Shoot()
@@ -139,7 +140,6 @@ public class DaveController : MonoBehaviour
     /*Freeze's Dave Movement (for "SpawnDelay" seconds), and sets Animation clip to Idle */
     {
         _freezeMovement = spawnDelay;
-        animator.SetTrigger(BlinkTrigger);
         animator.SetFloat(WalkingSpeed, 0);
         animator.SetBool(IsJumping, false);
     }
@@ -220,13 +220,18 @@ public class DaveController : MonoBehaviour
 
 
     private void OnCollisionEnter2D(Collision2D other)
+        /* Important:
+         when Dave dies from any enemy, this triggers an animation clip (named "explosion").
+          at the end of the animation clip there is a trigger (animation-event) which tells the game manager
+           that dave just died. the game manager then spawns dave back to init position and takes care of the rest.
+         amalek: 
+         dave die -> explosion animation begins -> explosion ends -> animation event calling game manager's function "DaveDied()"   
+         */
     {
-        if (other.gameObject.CompareTag("Enemy"))
-        {
-            Debug.Log("hit");
-            gameManager.DaveDied();
-            //TODO: explosion animation
-        }
+        if (!other.gameObject.CompareTag("Enemy")) return;
+        animator.SetTrigger(Explosion); 
+        IdleFreeze();
+        Debug.Log("explosion!");
     }
 
     #endregion

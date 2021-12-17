@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camInitPos: {x: -1, y: 0, z: -10}
   daveInitPos: {x: -9, y: -3}
-  prevLevelName: 
+  prevLevelName: null

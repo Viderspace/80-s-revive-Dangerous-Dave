@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BezierFollow : MonoBehaviour
@@ -14,7 +13,7 @@ public class BezierFollow : MonoBehaviour
 
     private Vector2 objectPosition;
 
-    private float speedModifier;
+    [HideInInspector]public float speedModifier = 0.4f;
 
     private bool coroutineAllowed;
 
@@ -23,7 +22,7 @@ public class BezierFollow : MonoBehaviour
     {
         routeToGo = 0;
         tParam = 0f;
-        speedModifier = 0.5f;
+        speedModifier = 0.4f;
         coroutineAllowed = true;
     }
 

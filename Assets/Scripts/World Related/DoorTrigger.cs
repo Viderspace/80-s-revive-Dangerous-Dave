@@ -45,6 +45,7 @@ public class DoorTrigger : MonoBehaviour
 
     private void UnLoadCurrentLevel()
     {
+        Debug.Log(levelData.prevLevelName);
         SceneManager.UnloadSceneAsync(levelData.prevLevelName);
     }
 
@@ -67,8 +68,9 @@ public class DoorTrigger : MonoBehaviour
         Debug.Log($"Entered {gameObject.name}");
         LoadNextLevel();
         MoveCamToNewScene();
-        gameManager.NextLevel();
         UnLoadCurrentLevel();
+        gameManager.NextLevel();
+        
     }
 
     #endregion

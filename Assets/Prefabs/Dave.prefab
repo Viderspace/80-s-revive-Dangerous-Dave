@@ -41,6 +41,7 @@ GameObject:
   - component: {fileID: 942042088}
   - component: {fileID: 942042086}
   - component: {fileID: 942042087}
+  - component: {fileID: 6422904793871192057}
   m_Layer: 0
   m_Name: Dave Sprite (Animator)
   m_TagString: Untagged
@@ -133,6 +134,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &6422904793871192057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 942042085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af2708b18f2b41e695a3c31eca413f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
 --- !u!1 &1797696405
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,7 +283,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 0.5
+  m_GravityScale: 0.6
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -297,7 +311,8 @@ MonoBehaviour:
   - {fileID: 1797696405}
   walkingSpeed: 0.05
   jetSpeed: 2.5
-  jumpHeight: 230
+  jumpHeight: 250
+  spawnDelay: 3
   jetKey: 310
   jumpKey: 273
   shootKey: 32

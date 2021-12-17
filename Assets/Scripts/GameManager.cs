@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -9,22 +8,32 @@ public class GameManager : MonoBehaviour
     private static GameManager _shared;
 
     #region Inspector
-
+    
     [Space] [Header("Game Components")] [SerializeField]
-    private GameObject uiPrefab;
-
-    [SerializeField] private GameObject davePrefab;
+    private UIManager uiManager;
+    
+    [SerializeField] private Camera mainCam;
+    [SerializeField] private GameObject dave;
     [SerializeField] private List<LevelData> levelsData = new List<LevelData>();
-    private DoorTrigger _door;
+    
     
     #endregion
 
 
     #region Fields
 
-    private UIManager _uiManager;
-    private GameObject _dave;
+    
+    [HideInInspector] public InitLevel startFromLevel = InitLevel.Level1;
+    public enum InitLevel
+    {
+        Level1 = 1,
+        Level2 = 2,
+        Level3 = 3
+    }
 
+    // private UIManager uiManager;
+    
+    private DoorTrigger _door;
     private const float JetFuelDuration = 10f;
     private int _totalPointsCollected;
     private float _jetFuelAmount;
@@ -44,7 +53,7 @@ public class GameManager : MonoBehaviour
         set
         {
             _totalPointsCollected = value;
-            _uiManager.Points(value);
+            uiManager.Points(value);
         }
     }
 
@@ -55,7 +64,7 @@ public class GameManager : MonoBehaviour
         set
         {
             _hasGun = value;
-            _uiManager.HasGun(value);
+            uiManager.HasGun(value);
         }
     }
 
@@ -66,7 +75,7 @@ public class GameManager : MonoBehaviour
         set
         {
             _jetFuelAmount = value;
-            _uiManager.JetFuel(value);
+            uiManager.JetFuel(value);
         }
     }
 
@@ -77,7 +86,7 @@ public class GameManager : MonoBehaviour
         set
         {
             _hasKey = value;
-            _uiManager.HasKey(value);
+            uiManager.HasKey(value);
             _door = FindObjectOfType<DoorTrigger>();
             if (_door) _door.Locked(value);
         }
@@ -93,7 +102,18 @@ public class GameManager : MonoBehaviour
         set
         {
             _currentLevel = value;
-            _uiManager.Level(value);
+            uiManager.Level(value);
+        }
+    }
+
+    public InitLevel StartFromLevel
+    {
+        get => startFromLevel;
+        set
+        {
+            startFromLevel = value;
+            Debug.Log("mamager:" + value);
+            
         }
     }
 
@@ -106,19 +126,23 @@ public class GameManager : MonoBehaviour
         // Jetpack Item has been collected, Turn on jetpack UI display
     {
         JetFuelAmount = JetFuelDuration;
-        _uiManager.NewJetpack();
+        uiManager.NewJetpack();
     }
 
 
     private void InitAllGameVariables()
     {
         /* Init Game Properties */
-        CurrentLevel = 1;
+        CurrentLevel = (int) StartFromLevel;
         HasGun = false;
         HasKey = false;
         JetFuelAmount = 0f;
         TotalPointsCollected = 0;
         LivesRemaining = 3;
+        uiManager.gameObject.SetActive(true);
+        uiManager.InitAll();
+        
+        dave.SetActive(true);
     }
 
 
@@ -132,7 +156,7 @@ public class GameManager : MonoBehaviour
         }
 
         LivesRemaining -= 1;
-        _uiManager.DisplayLives(LivesRemaining);
+        uiManager.DisplayLives(LivesRemaining);
         SpawnDaveToInitPos();
     }
 
@@ -140,7 +164,31 @@ public class GameManager : MonoBehaviour
     private void SpawnDaveToInitPos()
     {
         var targetPos = (levelsData[CurrentLevel-1]).daveInitPos;
-        _dave.GetComponent<DaveController>().SpawnDave(targetPos);
+        dave.GetComponent<DaveController>().SpawnDave(targetPos);
+        mainCam.transform.position = levelsData[CurrentLevel - 1].camInitPos;
+    }
+    
+    private void LoadFirstLevel()
+    {
+        
+        switch (StartFromLevel)
+        {
+            case InitLevel.Level1:
+                SceneManager.LoadSceneAsync("Level 1", LoadSceneMode.Additive);
+                break;
+            case InitLevel.Level2:
+                SceneManager.LoadSceneAsync("Level 2", LoadSceneMode.Additive);
+                break;
+            case InitLevel.Level3:
+                SceneManager.LoadSceneAsync("Level 3", LoadSceneMode.Additive);
+                break;
+            default:
+                SceneManager.LoadSceneAsync("Level 1", LoadSceneMode.Additive);
+                break;
+        }
+        CurrentLevel = (int)StartFromLevel;
+        SpawnDaveToInitPos();
+
     }
     
     
@@ -154,18 +202,7 @@ public class GameManager : MonoBehaviour
         SpawnDaveToInitPos();
     }
 
-    private void MakeUI()
-    {
-        var ui = Instantiate(uiPrefab, Vector3.zero, Quaternion.identity);
-        _uiManager = ui.GetComponent<UIManager>();
-        _uiManager.InitAll();
-    }
 
-    private void MakeDave()
-    {
-        _dave = Instantiate(davePrefab, Vector3.zero, Quaternion.identity);
-        SpawnDaveToInitPos();
-    }
 
 
 
@@ -203,15 +240,19 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        MakeUI();
-        InitAllGameVariables();
-        MakeDave();
         
-        var firstLevel = SceneManager.GetSceneByBuildIndex(1);
-        SceneManager.LoadSceneAsync("Level 1", LoadSceneMode.Additive);
-        // SceneManager.SetActiveScene(firstLevel);
-        
+
+
     }
+
+    public void PlayGame()
+    {
+        InitAllGameVariables();
+        LoadFirstLevel();
+        SpawnDaveToInitPos();
+    }
+
+
 
     #endregion
 }

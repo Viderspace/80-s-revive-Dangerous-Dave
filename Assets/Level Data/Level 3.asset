@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb5be892f42f7427bac004dd63dd7e82, type: 3}
   m_Name: Level 3
   m_EditorClassIdentifier: 
-  camInitPos: {x: 0, y: 0, z: 0}
-  daveInitPos: {x: 0, y: 0}
+  camInitPos: {x: -1, y: 0, z: -110}
+  daveInitPos: {x: -8.5, y: -0.5}
   prevLevelName: Level 2
