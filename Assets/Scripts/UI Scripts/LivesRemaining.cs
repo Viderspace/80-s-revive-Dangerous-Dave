@@ -1,38 +1,40 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LivesRemaining : MonoBehaviour
+namespace UI_Scripts
 {
-    [SerializeField] private List<GameObject> livesObjects = new List<GameObject>();
-    
-    private int _remainingLives;
-    public int Lives
+    public class LivesRemaining : MonoBehaviour
     {
-        get => _remainingLives;
-        set
+        [SerializeField] private List<GameObject> livesObjects = new List<GameObject>();
+    
+        private int _remainingLives;
+        public int Lives
         {
-            _remainingLives = value;
-            if (Lives > 2 || Lives < 0) return;
-            livesObjects[_remainingLives].SetActive(false);
+            get => _remainingLives;
+            set
+            {
+                _remainingLives = value;
+                if (Lives > 2 || Lives < 0) return;
+                livesObjects[_remainingLives].SetActive(false);
+            }
         }
-    }
     
     
 
-    public void InitLives()
-    {
-        foreach (var life in livesObjects)
+        public void InitLives()
         {
-            life.SetActive(true);
+            foreach (var life in livesObjects)
+            {
+                life.SetActive(true);
+            }
+
+            Lives = 3;
         }
 
-        Lives = 3;
-    }
 
-
-    void Start()
-    {
-        InitLives();
+        void Start()
+        {
+            InitLives();
+        }
     }
 }

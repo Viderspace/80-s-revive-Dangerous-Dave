@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Dave_Related;
 using UnityEditor;
@@ -230,6 +231,14 @@ public class GameManager : MonoBehaviour
             return;
         }
         _shared = this;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            QuitGame();
+        }
     }
 
     #endregion

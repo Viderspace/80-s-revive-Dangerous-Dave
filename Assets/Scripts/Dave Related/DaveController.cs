@@ -237,8 +237,9 @@ namespace Dave_Related
             if (!other.gameObject.CompareTag("Enemy")) return;
             animator.SetTrigger(Explosion); 
             IdleFreeze();
-            Debug.Log("explosion!");
+
         }
+        
 
         #endregion
     }
