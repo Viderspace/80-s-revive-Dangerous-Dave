@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using Dave_Related;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using World_Related;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,19 +11,16 @@ public class GameManager : MonoBehaviour
 
     #region Inspector
     
-    [Space] [Header("Game Components")] [SerializeField]
-    private UIManager uiManager;
-    
+    [Space] [Header("Game Components")] 
+    [SerializeField] private UIManager uiManager;
     [SerializeField] private Camera mainCam;
     [SerializeField] private GameObject dave;
     [SerializeField] private List<LevelData> levelsData = new List<LevelData>();
-    
     
     #endregion
 
 
     #region Fields
-
     
     [HideInInspector] public InitLevel startFromLevel = InitLevel.Level1;
     public enum InitLevel
@@ -31,8 +30,6 @@ public class GameManager : MonoBehaviour
         Level3 = 3
     }
 
-    // private UIManager uiManager;
-    
     private DoorTrigger _door;
     private const float JetFuelDuration = 10f;
     private int _totalPointsCollected;
@@ -41,6 +38,7 @@ public class GameManager : MonoBehaviour
     private bool _hasKey;
     private bool _gameOver;
     private int _currentLevel;
+    
     #endregion
     
     
@@ -55,6 +53,13 @@ public class GameManager : MonoBehaviour
             _totalPointsCollected = value;
             uiManager.Points(value);
         }
+    }
+    
+    
+    public InitLevel StartFromLevel
+    {
+        get => startFromLevel;
+        set => startFromLevel = value;
     }
 
     /* GAMEPLAY PROPERTIES */
@@ -91,12 +96,10 @@ public class GameManager : MonoBehaviour
             if (_door) _door.Locked(value);
         }
     }
-
-
-
+    
     private int LivesRemaining { get; set; } = 3;
 
-    public int CurrentLevel
+    private int CurrentLevel
     {
         get => _currentLevel;
         set
@@ -106,16 +109,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public InitLevel StartFromLevel
-    {
-        get => startFromLevel;
-        set
-        {
-            startFromLevel = value;
-            Debug.Log("mamager:" + value);
-            
-        }
-    }
 
     #endregion
     
@@ -123,7 +116,7 @@ public class GameManager : MonoBehaviour
     #region Methods
 
     public void CollectJetpack()
-        // Jetpack Item has been collected, Turn on jetpack UI display
+        /* Setting Fuel Amount to Full-Tank, and displaying 'jetpack' UI in lower dashboard.  */
     {
         JetFuelAmount = JetFuelDuration;
         uiManager.NewJetpack();
@@ -131,8 +124,8 @@ public class GameManager : MonoBehaviour
 
 
     private void InitAllGameVariables()
+        /* Initialise all Game Properties at the beginning of the game */
     {
-        /* Init Game Properties */
         CurrentLevel = (int) StartFromLevel;
         HasGun = false;
         HasKey = false;
@@ -141,8 +134,7 @@ public class GameManager : MonoBehaviour
         LivesRemaining = 3;
         uiManager.gameObject.SetActive(true);
         uiManager.InitAll();
-        
-        dave.SetActive(true);
+        // dave.SetActive(true);
     }
 
 
@@ -154,7 +146,7 @@ public class GameManager : MonoBehaviour
             QuitGame();
             return;
         }
-
+        
         LivesRemaining -= 1;
         uiManager.DisplayLives(LivesRemaining);
         SpawnDaveToInitPos();
@@ -162,15 +154,22 @@ public class GameManager : MonoBehaviour
 
 
     private void SpawnDaveToInitPos()
+    /* Spawning Dave to the current level Init position,
+     For every level, The Init Position is stored inside a 'Level Data' (Scriptable object) */
     {
+        if (dave.gameObject.activeSelf == false)  dave.SetActive(true);
         var targetPos = (levelsData[CurrentLevel-1]).daveInitPos;
         dave.GetComponent<DaveController>().SpawnDave(targetPos);
         mainCam.transform.position = levelsData[CurrentLevel - 1].camInitPos;
+
+
+        
     }
     
-    private void LoadFirstLevel()
+    private void LoadInitLevel()
+        /* Loading (Additively) the Scene of the selected Starting level.
+         (In the start-up UI menu, the player can choose from what level to start the game). */
     {
-        
         switch (StartFromLevel)
         {
             case InitLevel.Level1:
@@ -187,36 +186,33 @@ public class GameManager : MonoBehaviour
                 break;
         }
         CurrentLevel = (int)StartFromLevel;
-        SpawnDaveToInitPos();
-
     }
     
     
     public void NextLevel()
     {
         CurrentLevel += 1;
-        //TODO: FIND OUT IF THE ORIGINAL GAME ALLOWS TO KEEP GUN & JETPACK in the next level, IF SO, SET THEN TO 'false' HERE
         HasKey = false;
         HasGun = false;
         JetFuelAmount = 0f;
         SpawnDaveToInitPos();
     }
 
-
-
-
-
-
-    private static void QuitGame()
+    
+    public static void QuitGame()
     {
-        // save any game data here
 #if UNITY_EDITOR
-        // Application.Quit() does not work in the editor so
-        // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
         EditorApplication.isPlaying = false;
 #else
          Application.Quit();
 #endif
+    }
+    
+    public void PlayGame()
+    {
+        InitAllGameVariables();
+        LoadInitLevel();
+        SpawnDaveToInitPos();
     }
 
     #endregion
@@ -224,35 +220,17 @@ public class GameManager : MonoBehaviour
     
     #region MonoBehaviour
 
-    // This Game Manager class is a singleton;
+    
     private void Awake()
     {
-        if (_shared != null)
+        
+        if (_shared != null) // This Game Manager is a singleton;
         {
             Destroy(gameObject);
             return;
         }
-
         _shared = this;
-        // DontDestroyOnLoad(gameObject);
     }
-    
-
-    private void Start()
-    {
-        
-
-
-    }
-
-    public void PlayGame()
-    {
-        InitAllGameVariables();
-        LoadFirstLevel();
-        SpawnDaveToInitPos();
-    }
-
-
 
     #endregion
 }

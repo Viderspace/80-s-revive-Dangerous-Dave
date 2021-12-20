@@ -739,7 +739,7 @@ Tilemap:
       - {fileID: 21300000, guid: 5d6717caa736c41fda3bf3ad1c1aa4c8, type: 3}
       - {fileID: 21300000, guid: 34864f8cf508c421e8c4d7ff6dd1abdf, type: 3}
       - {fileID: 21300000, guid: 98480504423ae4cd3b7c6bb17e88513e, type: 3}
-      m_AnimationSpeed: 6
+      m_AnimationSpeed: 6.0000005
       m_AnimationTimeOffset: 0
       m_IsLooping: 1
   m_TileAssetArray:
@@ -1451,7 +1451,7 @@ Tilemap:
       - {fileID: 21300000, guid: 2580be228df2f4d92b3c5285c6fcab58, type: 3}
       - {fileID: 21300000, guid: d8e582e324e55451898858f2f7e78b8f, type: 3}
       - {fileID: 21300000, guid: 999828c6383914467ab7d8ac38461522, type: 3}
-      m_AnimationSpeed: 6
+      m_AnimationSpeed: 6.0000005
       m_AnimationTimeOffset: 3
       m_IsLooping: 1
   - first: {x: -6, y: -5, z: 0}
@@ -1481,7 +1481,7 @@ Tilemap:
       - {fileID: 21300000, guid: 2580be228df2f4d92b3c5285c6fcab58, type: 3}
       - {fileID: 21300000, guid: d8e582e324e55451898858f2f7e78b8f, type: 3}
       - {fileID: 21300000, guid: 999828c6383914467ab7d8ac38461522, type: 3}
-      m_AnimationSpeed: 6.0000005
+      m_AnimationSpeed: 6
       m_AnimationTimeOffset: 3
       m_IsLooping: 1
   - first: {x: -3, y: -5, z: 0}
@@ -1649,7 +1649,7 @@ Tilemap:
       - {fileID: 21300000, guid: 2580be228df2f4d92b3c5285c6fcab58, type: 3}
       - {fileID: 21300000, guid: d8e582e324e55451898858f2f7e78b8f, type: 3}
       - {fileID: 21300000, guid: 999828c6383914467ab7d8ac38461522, type: 3}
-      m_AnimationSpeed: 6.0000005
+      m_AnimationSpeed: 6
       m_AnimationTimeOffset: 3
       m_IsLooping: 1
   - first: {x: 31, y: -5, z: 0}
@@ -2169,7 +2169,6 @@ GameObject:
   - component: {fileID: 2542945633304456927}
   - component: {fileID: 2542945633304456933}
   - component: {fileID: 2542945633304456932}
-  - component: {fileID: 2542945633304456934}
   m_Layer: 9
   m_Name: Tilemap Deadly
   m_TagString: Enemy
@@ -2650,18 +2649,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &2542945633304456934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2542945633304456931}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f4547b7e6919464cb051e1bffa7d0fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &2542945633797289308
 Transform:
   m_ObjectHideFlags: 0
