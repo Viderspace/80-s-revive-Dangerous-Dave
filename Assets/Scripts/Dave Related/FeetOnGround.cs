@@ -1,42 +1,39 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class FeetOnGround : MonoBehaviour
+namespace Dave_Related
 {
-    [SerializeField] private Collider2D _collider2D;
-    [SerializeField] private Animator animator;
-    private bool _onGround;
-    public bool OnGround
+    public class FeetOnGround : MonoBehaviour
+    /* Dave's Feet script: allows the main Controller script ('DaveController')
+     to know whether the player touches  'ground' or not at any given moment in the game.
+     this allows the player to perform a Jump only when dave is on the ground. */
     {
-        get => _onGround;
-        set
+        #region Properties
+
+        public bool OnGround { get; private set; }
+
+        #endregion
+
+        #region MonoBehaviour (Collisions)
+
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            _onGround = value;
-            
+            if (other.gameObject.CompareTag("Enemy"))
+            {
+                OnGround = true;
+                return;
+            }
 
-
-        } 
-    }
-
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Enemy"))
-        {
+            if (!other.gameObject.CompareTag("World")) return;
             OnGround = true;
-            return;
         }
 
-        if (!other.gameObject.CompareTag("World")) return;
-        OnGround = true;
-    }
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (!other.gameObject.CompareTag("World")) return;
-        OnGround = false;
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            if (!other.gameObject.CompareTag("World")) return;
+            OnGround = false;
+        }
+
+        #endregion
     }
-    
 }

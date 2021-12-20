@@ -1,13 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
-
 namespace UI_Scripts
 {
     public class LivesRemaining : MonoBehaviour
+    /* Simple Controller for Displaying the Current 'Lives' status in the Upper dashboard UI (aka 'DAVES: $ $ $')  */
     {
+        #region Inspector & Fields
+
         [SerializeField] private List<GameObject> livesObjects = new List<GameObject>();
-    
+
         private int _remainingLives;
+
+        #endregion
+
+        #region Properties
+
         public int Lives
         {
             get => _remainingLives;
@@ -18,8 +25,10 @@ namespace UI_Scripts
                 livesObjects[_remainingLives].SetActive(false);
             }
         }
-    
-    
+
+        #endregion
+
+        #region Methods
 
         public void InitLives()
         {
@@ -31,10 +40,15 @@ namespace UI_Scripts
             Lives = 3;
         }
 
+        #endregion
 
-        void Start()
+        #region MonoBehaviour
+
+        private void Start()
         {
             InitLives();
         }
+
+        #endregion
     }
 }

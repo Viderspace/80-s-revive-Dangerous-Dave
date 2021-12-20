@@ -1,57 +1,59 @@
 using Unity.Mathematics;
 using UnityEngine;
-
-public class Gun : MonoBehaviour
+namespace Dave_Related
 {
-    #region Inspector
+    public class Gun : MonoBehaviour
+    {
+        #region Inspector
 
-    [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private float bulletSpeed;
-    [SerializeField] private float recoilTime = 1.2f;
+        [SerializeField] private GameObject bulletPrefab;
+        [SerializeField] private float bulletSpeed;
+        [SerializeField] private float recoilTime = 1.2f;
 
-    #endregion
+        #endregion
 
-    #region Fields
+        #region Fields
 
-    private float _lastShotTime;
+        private float _lastShotTime;
 
-    #endregion
+        #endregion
 
-    #region Methods
+        #region Methods
 
-    public void ShootBullet(bool isFacingRight, Vector3 originPoint)
-        /* method called by Dave's controller, spawns a bullet instance from dave's gun (if he has one). 
+        public void ShootBullet(bool isFacingRight, Vector3 originPoint)
+            /* method called by Dave's controller, spawns a bullet instance from dave's gun (if he has one). 
         the bullet direction is based on param "isFacingRight". 
         method respects a fixed recoil time (to avoid spraying bullets).  */
-    {
-        if (_lastShotTime > 0) return;
-        var bullet = Instantiate(bulletPrefab, originPoint, quaternion.identity);
-        switch (isFacingRight)
         {
-            case false:
-                bullet.GetComponent<SpriteRenderer>().flipX = true;
-                bullet.GetComponent<Rigidbody2D>().velocity = new Vector2((-1) * bulletSpeed, 0);
-                break;
-            default:
-                bullet.GetComponent<Rigidbody2D>().velocity = new Vector2(bulletSpeed, 0);
-                break;
+            if (_lastShotTime > 0) return;
+            var bullet = Instantiate(bulletPrefab, originPoint, quaternion.identity);
+            switch (isFacingRight)
+            {
+                case false:
+                    bullet.GetComponent<SpriteRenderer>().flipX = true;
+                    bullet.GetComponent<Rigidbody2D>().velocity = new Vector2((-1) * bulletSpeed, 0);
+                    break;
+                default:
+                    bullet.GetComponent<Rigidbody2D>().velocity = new Vector2(bulletSpeed, 0);
+                    break;
+            }
+
+            _lastShotTime = recoilTime;
+            Destroy(bullet, 5);
         }
 
-        _lastShotTime = recoilTime;
-        Destroy(bullet, 5);
-    }
+        #endregion
 
-    #endregion
+        #region MonoBehaviour
 
-    #region MonoBehaviour
-
-    private void Update()
-    {
-        if (_lastShotTime > 0)
+        private void Update()
         {
-            _lastShotTime -= Time.deltaTime;
+            if (_lastShotTime > 0)
+            {
+                _lastShotTime -= Time.deltaTime;
+            }
         }
-    }
 
-    #endregion
+        #endregion
+    }
 }

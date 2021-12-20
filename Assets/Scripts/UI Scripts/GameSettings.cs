@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Dave_Related;
 using UnityEngine;
-
 namespace UI_Scripts
 {
     public class GameSettings : MonoBehaviour
@@ -20,7 +19,6 @@ namespace UI_Scripts
         
         #endregion
 
-        
         #region Fields (Dictionaries for UI DropDown-Input's)
         
         private readonly Dictionary<int, KeyCode> _jumpKeys 
@@ -35,7 +33,6 @@ namespace UI_Scripts
             = new Dictionary<int, KeyCode>() {{0, KeyCode.Backspace}, {1, KeyCode.Z}};
         
         #endregion
-
         
         #region Methods
 
@@ -68,8 +65,7 @@ namespace UI_Scripts
         }
 
         #endregion
-
-
+        
         #region MonoBehaviour
 
         private void Start()

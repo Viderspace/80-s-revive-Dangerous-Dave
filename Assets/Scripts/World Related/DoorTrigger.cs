@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 namespace World_Related
 {
     public class DoorTrigger : MonoBehaviour
+    /* A door trigger object is an invisible tile-shaped game-object (with this script attached)
+     located once in each level on top of the 'Door' tile.
+     Responsible for loading and moving to the next level, and unloading the previous level. */
     {
         #region Inspector
 
@@ -18,7 +20,6 @@ namespace World_Related
         private bool IsLoaded { get; set; }
 
         #endregion
-
 
         #region Methods
 
@@ -51,8 +52,7 @@ namespace World_Related
         }
 
         #endregion
-
-
+        
         #region MonoBehaviour
 
         private void Start()

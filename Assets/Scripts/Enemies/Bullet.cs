@@ -1,13 +1,13 @@
-using System;
 using UnityEngine;
-
-public class Bullet : MonoBehaviour
+namespace Enemies
 {
-
-
-    private void OnCollisionEnter2D(Collision2D other)
+    public class Bullet : MonoBehaviour
+    /* Script for Bullets Instances (from dave's Gun or monster's) to remove them on collision.
+     (all other collision logic is run by The main scripts) */
     {
-        Destroy(gameObject);
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            Destroy(gameObject);
+        }
     }
-    
 }

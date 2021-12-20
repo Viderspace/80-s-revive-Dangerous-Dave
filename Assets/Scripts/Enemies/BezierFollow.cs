@@ -1,69 +1,76 @@
 using System.Collections;
 using UnityEngine;
-
-public class BezierFollow : MonoBehaviour
+namespace Enemies
 {
-
-    [SerializeField]
-    private Transform[] routes;
-
-    private int routeToGo;
-
-    private float tParam;
-
-    private Vector2 objectPosition;
-
-    [HideInInspector]public float speedModifier = 0.4f;
-
-    private bool coroutineAllowed;
-
-    // Start is called before the first frame update
-    void Start()
+    public class BezierFollow : MonoBehaviour
+        /* A Short script i pulled from the web To make the monsters move in a specific Route/Pattern.
+         This is how i was able to define in level 3 each 'bad-spider' specific route */
     {
-        routeToGo = 0;
-        tParam = 0f;
-        speedModifier = 0.4f;
-        coroutineAllowed = true;
-    }
+        #region Inspector & Fields
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (coroutineAllowed)
+        [SerializeField] private Transform[] routes;
+        private int _routeToGo;
+        private float _tParam;
+        private Vector2 _objectPosition;
+        [HideInInspector] public float speedModifier = 0.4f;
+        private bool _coroutineAllowed;
+
+        #endregion
+
+        #region Methods
+
+        private IEnumerator GoByTheRoute(int routeNum)
         {
-            StartCoroutine(GoByTheRoute(routeToGo));
-        }
-    }
+            _coroutineAllowed = false;
 
-    private IEnumerator GoByTheRoute(int routeNum)
-    {
-        coroutineAllowed = false;
+            Vector2 p0 = routes[routeNum].GetChild(0).position;
+            Vector2 p1 = routes[routeNum].GetChild(1).position;
+            Vector2 p2 = routes[routeNum].GetChild(2).position;
+            Vector2 p3 = routes[routeNum].GetChild(3).position;
 
-        Vector2 p0 = routes[routeNum].GetChild(0).position;
-        Vector2 p1 = routes[routeNum].GetChild(1).position;
-        Vector2 p2 = routes[routeNum].GetChild(2).position;
-        Vector2 p3 = routes[routeNum].GetChild(3).position;
+            while (_tParam < 1)
+            {
+                _tParam += Time.deltaTime * speedModifier;
 
-        while(tParam < 1)
-        {
-            tParam += Time.deltaTime * speedModifier;
+                _objectPosition = Mathf.Pow(1 - _tParam, 3) * p0 + 3 * Mathf.Pow(1 - _tParam, 2) * _tParam * p1 +
+                                  3 * (1 - _tParam) * Mathf.Pow(_tParam, 2) * p2 + Mathf.Pow(_tParam, 3) * p3;
 
-            objectPosition = Mathf.Pow(1 - tParam, 3) * p0 + 3 * Mathf.Pow(1 - tParam, 2) * tParam * p1 + 3 * (1 - tParam) * Mathf.Pow(tParam, 2) * p2 + Mathf.Pow(tParam, 3) * p3;
+                transform.position = _objectPosition;
+                yield return new WaitForEndOfFrame();
+            }
 
-            transform.position = objectPosition;
-            yield return new WaitForEndOfFrame();
+            _tParam = 0f;
+
+            _routeToGo += 1;
+
+            if (_routeToGo > routes.Length - 1)
+            {
+                _routeToGo = 0;
+            }
+
+            _coroutineAllowed = true;
         }
 
-        tParam = 0f;
+        #endregion
 
-        routeToGo += 1;
+        # region MonoBehavior
 
-        if(routeToGo > routes.Length - 1)
+        private void Start()
         {
-            routeToGo = 0;
+            _routeToGo = 0;
+            _tParam = 0f;
+            speedModifier = 0.4f;
+            _coroutineAllowed = true;
         }
 
-        coroutineAllowed = true;
+        private void Update()
+        {
+            if (_coroutineAllowed)
+            {
+                StartCoroutine(GoByTheRoute(_routeToGo));
+            }
+        }
 
+        #endregion
     }
 }

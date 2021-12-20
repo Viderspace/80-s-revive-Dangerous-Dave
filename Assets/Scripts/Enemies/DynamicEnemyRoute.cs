@@ -1,13 +1,12 @@
 using UnityEngine;
-
 namespace Enemies
 {
     public class DynamicEnemyRoute : MonoBehaviour
+        /* A Short script i pulled from the web To make the monsters move in a specific Route/Pattern.
+     This is how i was able to define in level 3 each 'bad-spider' specific route */
     {
 
-        [SerializeField]
-        private Transform[] controlPoints;
-
+        [SerializeField] private Transform[] controlPoints;
         private Vector2 _gizmosPosition;
 
         private void OnDrawGizmos()

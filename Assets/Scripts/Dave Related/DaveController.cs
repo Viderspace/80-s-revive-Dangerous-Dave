@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace Dave_Related
 {
     public class DaveController : MonoBehaviour
+    /* This is the main script for the Player behaviour (aka 'Dave').
+    Controlling Movement Physics (Walking, Jumping, Jetpack flight), Gun Fire capabilities,
+    and Animation. */
     {
         #region Inspector
 
@@ -35,9 +37,7 @@ namespace Dave_Related
         [SerializeField] public KeyCode shootKey = KeyCode.Space;
     
         #endregion
-
-    
-    
+        
         #region Fields
     
         /* -- Animation variables --  */
@@ -58,9 +58,7 @@ namespace Dave_Related
 
 
         #endregion
-
-    
-    
+        
         #region Properties
 
         private float MoveDirection { get; set; }
@@ -70,12 +68,9 @@ namespace Dave_Related
         
         #endregion
 
-        
-
         #region Methods
     
         public void SpawnDave(Vector2 initPos)
-        /* */
         {
             animator.SetTrigger(BlinkTrigger);
             IdleFreeze();
@@ -183,11 +178,7 @@ namespace Dave_Related
         }
 
         #endregion
-    
-
-    
-    
-    
+        
         #region MonoBehaviour
 
         private void Start()

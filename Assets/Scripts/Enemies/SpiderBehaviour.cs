@@ -1,14 +1,13 @@
 using Dave_Related;
 using UnityEngine;
-
 namespace Enemies
 {
     public class SpiderBehaviour : MonoBehaviour
         /* This script is responsible for the 'Bad spider' (game-object) behaviour and capabilities.
          * 
-         * 'Bad-Spiders' are dynamic-enemy-objects. Every spider in the game constantly moves in circles (non-stop)
-         * on a pre-configured individual route.  Bad-Spiders can shoot bullets at dave
-         * (one bullet every 'recoilTime' amount of seconds). and they are deadly when dave collides with them.
+         * 'Bad-Spiders' are dynamic-enemy-objects. Every spider in the game constantly moves (non-stop) in circles
+         *  on a pre-configured individual route.  Bad-Spiders can shoot bullets at dave,
+         * one bullet for every 'recoilTime' amount of seconds. and they are deadly if dave collides with them.
          */
     {
         #region Inspector
@@ -28,7 +27,6 @@ namespace Enemies
 
         #endregion
 
-        
         #region Fields
 
         private GameObject _dave;
@@ -41,7 +39,6 @@ namespace Enemies
         private const float MAXBulletHeight = 1.6f;
 
         #endregion
-
 
         #region Methods
 
@@ -68,7 +65,6 @@ namespace Enemies
         }
 
         #endregion
-
 
         #region MonoBehaviour
 
